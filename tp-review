@@ -1,0 +1,122 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'tempfile'
+require 'date'
+
+# The Taskpaper file is the argument provided
+task_file = ARGV[0]
+@@date = ARGV[1] ? Date.parse(ARGV[1]) : Date.today
+@@debug = ARGV[2] == "--debug"
+
+puts "Tasks file: #{task_file}" if @@debug
+
+def replace_day_names(line)
+  match = /@due\(sunday|monday|tuesday|wednesday|thursday|friday|saturday\)/i.match(line)
+  puts "Found date match: #{match}" if @@debug
+  if match
+    date = @@date
+    if / @due\(sunday\)/i.match(line)
+      while date.wday != 0 do date = date + 1 end
+      line.gsub(/ @due\(sunday\)/i, " @due(#{date.to_s})")
+    elsif / @due\(monday\)/i.match(line)
+      while date.wday != 1 do date = date + 1 end
+      line.gsub(/ @due\(monday\)/i, " @due(#{date.to_s})")
+    elsif / @due\(tuesday\)/i.match(line)
+      while date.wday != 2 do date = date + 1 end
+      line.gsub(/ @due\(tuesday\)/i, " @due(#{date.to_s})")
+    elsif / @due\(wednesday\)/i.match(line)
+      while date.wday != 3 do date = date + 1 end
+      line.gsub(/ @due\(wednesday\)/i, " @due(#{date.to_s})")
+    elsif / @due\(thursday\)/i.match(line)
+      while date.wday != 4 do date = date + 1 end
+      line.gsub(/ @due\(thursday\)/i, " @due(#{date.to_s})")
+    elsif / @due\(friday\)/i.match(line)
+      while date.wday != 5 do date = date + 1 end
+      line.gsub(/ @due\(friday\)/i, " @due(#{date.to_s})")
+    elsif / @due\(saturday\)/i.match(line)
+      while date.wday != 6 do date = date + 1 end
+      line.gsub(/ @due\(saturday\)/i, " @due(#{date.to_s})")
+    else
+      line
+    end
+  else
+    line
+  end
+end
+
+def mark_due_tomorrow(line)
+  replace_match(line, " @due(#{@@date.+(1).to_s})", " @tomorrow")
+end
+
+def mark_due_today(line)
+  replace_match(line, " @due(#{@@date.to_s})", " @today")
+end
+
+def mark_tomorrow_as_today(line)
+  replace_match(line, " @tomorrow", " @today")
+end
+
+def mark_today_as_overdue(line)
+  replace_match(line, " @today", " @overdue")
+end
+
+def replace_match(line, date, with_text)
+  if line.include?(date)
+    line.gsub(date, with_text)
+  else
+    line
+  end
+end
+
+def cleanup_done(line)
+  if /@done/.match(line) and /@today|@overdue|@due/.match(line)
+    line.gsub(/ @due\(.*\)/, '').gsub(/ @overdue/, '').gsub(/ @today/, '')
+  else
+    line
+  end
+end
+
+# Ensure the file actually exists that we are going to edit
+unless FileTest.exists?(task_file)
+  puts "File to review was not found (#{task_file})" if @@debug
+  exit 1
+end
+
+# Create a temporary file to record the changes
+temp_file = Tempfile.new("#{task_file.split('/').last}")
+puts "Temporary file: #{temp_file.path}" if @@debug
+
+# Scan each line of the Task file
+File.open(task_file).each_line do |line|
+
+  # for each line check if it needs to be processed
+  puts "Processing: #{line}" if @@debug
+
+  # A line marked with @due(day name) should be updated to the next date of that day
+  line = replace_day_names(line)
+  # A line marked with @done and a (@due or @today) should remove the due annotation
+  line = cleanup_done(line)
+  # A line marked with a @today should be set to @overdue
+  line = mark_today_as_overdue(line)
+  # A line marked with a @tomorrow should be set to @today
+  line = mark_tomorrow_as_today(line)
+  # A line marked with a @due(date) where the date is tomorrow should be set to @tomorrow
+  line = mark_due_tomorrow(line)
+  # A line marked with a @due(date) where the date is today should be set to @today
+  line = mark_due_today(line)
+
+  # Write reviewed line into temporary file
+  puts "Cleaned line: #{line}" if @@debug
+  temp_file.write line
+
+end
+
+temp_file.rewind
+puts "Temp File: " if @@debug
+puts temp_file.read
+temp_file.close
+
+# Move the temporary file over the original file
+destination = @@debug ? "#{task_file}.debug" : task_file
+FileUtils.mv(temp_file.path, destination)
