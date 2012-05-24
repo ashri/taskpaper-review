@@ -1,13 +1,13 @@
 Me:
-	- Get rid of rubbish @done(2012-05-22) @today
+	- Get rid of rubbish @done(2012-05-22) 
 	- Look for STIC sessions @done(2012-05-21)
-	- Buy Sardines @due(2012-05-23)
+	- Buy Sardines @due(2012-05-20)
 Development:
-	- Learn basic Tmux so I can have a window with IRC channel, shell, Git and Vim @due(Saturday)
+	- Learn basic Tmux so I can have a window with IRC channel, shell, Git and Vim @due(2012-05-26)
 	- Check out Dropwizard @url(http://dropwizard.codahale.com/getting-started/#getting-started)
 	- Complete Smalltalk koans @due(2012-05-22)
-	- Create a proper web presence at threeheadedmonkey.com @done(2012-05-22) @overdue
+	- Create a proper web presence at threeheadedmonkey.com @done(2012-05-22) 
 	- Create a process to saved loved and archived content from Instapaper
 Archive:
 	- Check Ruby Rogues picks @done(2012-05-13) @project(Me)
-	-	Need a milkshake @done(2012-05-10) @due(Saturday)
+	-	Need a milkshake @done(2012-05-10)
