@@ -114,7 +114,7 @@ end
 
 temp_file.rewind
 puts "Temp File: " if @@debug
-puts temp_file.read
+puts temp_file.read if @@debug
 temp_file.close
 
 # Move the temporary file over the original file
