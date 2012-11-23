@@ -1,8 +1,7 @@
 Taskpaper Review
 ================
 
-Taskpaper Review is a Ruby script which examines a [Taskpaper][1] file to update the due dates
-and remove unneeded @today and @due items after the tasks have been completed.
+Taskpaper Review is a Ruby script which examines a [Taskpaper][1] file to update the due dates and remove un-needed @today and @due items after the tasks have been completed.
 
 The rules
 ---------
@@ -29,16 +28,13 @@ Alternatively, tp-review takes two optional parameters when running:
 
   `tp-review <taskpaper-file> [<yyyy-mm-dd>] [--debug]`
 
-The date instructs the script to use the specified date rather than todays
-date.
+The date instructs the script to use the specified date rather than today's date.
 
-The debug flag means don't overwrite the file, just output debug log and write
-the changes to standard out.
+The debug flag won't overwrite the file, just output a debug log and write the changes to standard out.
 
 Using day to day
 ----------------
 
-The method I am using it to store my Taskpaper files in Dropbox and everynight
-have a cron job call this script to reivew the tasks in the files.
+I store my Taskpaper files in Dropbox and have a cron job call this script every night to review the tasks in the files.
 
 [1]: http://www.hogbaysoftware.com/products/taskpaper
